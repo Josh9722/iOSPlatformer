@@ -4,10 +4,10 @@ using UnityEngine;
 public class LaunchController : MonoBehaviour
 {
     // +++++++++++++++++++++++++ ATTRIBUTES +++++++++++++++++++++++++
-    [SerializeField] private float maxDragDistance = 3f;  // Maximum drag distance in world units
-    [SerializeField] private float launchPower = 10f;     // Power of the launch
-    [SerializeField] private float dragThreshold = 50f;   // Minimum drag distance in pixels to start dragging
-    [SerializeField] private float lerpSpeed = 10f;       // Speed of lerping for smooth dragging
+    [SerializeField] private float launchPower = 3f;     // Power of the launch
+    
+    private float maxDragDistance = 20f;  // Maximum drag distance in world units
+    private float dragThreshold = 5f;   // Minimum drag distance in pixels to start dragging
 
     private Rigidbody2D rb;
     private Vector2 launchDirection;
@@ -38,6 +38,9 @@ public class LaunchController : MonoBehaviour
             enabled = false;  // Disable the script to avoid errors
             return;
         }
+
+        // Ensure the Rigidbody2D is set to dynamic
+        rb.bodyType = RigidbodyType2D.Dynamic;
 
         mainCamera = Camera.main;
         if (mainCamera == null)
@@ -71,7 +74,6 @@ public class LaunchController : MonoBehaviour
         dragStartPosition = mainCamera.ScreenToWorldPoint(Input.mousePosition);  // Store the initial world position of the mouse
         isDragging = true;
         isThresholdMet = false;
-        rb.isKinematic = true;
         currentDragPosition = transform.position;  // Initialize current drag position for lerping
     }
 
@@ -117,9 +119,11 @@ public class LaunchController : MonoBehaviour
 
         if (isThresholdMet)
         {
-            rb.isKinematic = false;
             Vector3 endMousePosition = mainCamera.ScreenToWorldPoint(Input.mousePosition);  // World position where drag ends
             UpdateLaunchDirection(endMousePosition);
+
+            // Debug magnitude of vector 
+            Debug.Log("Magnitude of movement swipe: " + launchDirection.magnitude);
             ApplyLaunchForce();
         }
 
