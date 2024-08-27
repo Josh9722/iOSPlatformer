@@ -3,18 +3,17 @@ using UnityEngine;
 public class ElasticCameraFollow : MonoBehaviour
 {
     // +++++++++++++++++++++++++ ATTRIBUTES +++++++++++++++++++++++++
-    [SerializeField] private GameObject target; // The character to follow
-    [SerializeField] private float speed = 2.0f;
+    [SerializeField] private Transform target; // The character to follow
 
-    // +++++++++++++++++++++++++ METHODS +++++++++++++++++++++++++
-    
-    void Update () {
-        float interpolation = speed * Time.deltaTime;
-        
-        Vector3 position = this.transform.position;
-        position.y = Mathf.Lerp(this.transform.position.y, target.transform.position.y, interpolation);
-        position.x = Mathf.Lerp(this.transform.position.x, target.transform.position.x, interpolation);
-        
-        this.transform.position = position;
-    }
+	public float smoothSpeed = 0.125f;
+	public Vector3 offset;
+
+	void FixedUpdate ()
+	{
+		Vector3 desiredPosition = target.position + offset;
+		Vector3 smoothedPosition = Vector3.Lerp(transform.position, desiredPosition, smoothSpeed);
+		transform.position = smoothedPosition;
+
+	}
+
 }
